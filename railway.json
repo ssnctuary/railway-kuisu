@@ -1,6 +1,10 @@
 {
-  "$schema": "https://railway.com/railway.schema.json",
-  "deploy": {
-    "healthcheckPath": "/api/health"
-  }
+	"$schema": "https://railway.com/railway.schema.json",
+	"build": {
+		"buildCommand": "deno task build"
+	},
+	"deploy": {
+		"healthcheckPath": "/api/health",
+		"sleepApplication": true
+	}
 }
