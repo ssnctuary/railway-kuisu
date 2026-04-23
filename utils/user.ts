@@ -24,7 +24,6 @@ export interface HashedPassword {
 
 export const UserSchema = v.object({
 	created_at: v.date(),
-	deleted_at: v.nullable(v.date()),
 	id: v.bigint(),
 	username: v.string(),
 });

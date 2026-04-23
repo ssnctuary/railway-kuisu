@@ -1,6 +1,9 @@
 import { JWTPayload, jwtVerify, SignJWT } from "@panva/jose";
-import { encoder } from "./core.ts";
+import { encoder, HonoEnv } from "./core.ts";
 import { envOrThrow } from "@dudasaus/env-or-throw";
+import { bearerAuth } from "@hono/hono/bearer-auth";
+import { Context } from "@hono/hono";
+import { fetchUser } from "./user.ts";
 
 export interface Payload extends JWTPayload {
 	user_id: bigint;
@@ -10,6 +13,20 @@ interface Session {
 	access_token: string;
 	refresh_token: string;
 }
+
+export const honoBearerAuth = bearerAuth({
+	async verifyToken(token, ctx: Context<HonoEnv>) {
+		const userId = await verifyAccessToken(token);
+		const user = await fetchUser(userId);
+
+		if (!user) {
+			return false;
+		} else {
+			ctx.set("user", user);
+			return true;
+		}
+	},
+});
 
 export async function createAccessToken(userId: bigint): Promise<string> {
 	const jwt = new SignJWT({
